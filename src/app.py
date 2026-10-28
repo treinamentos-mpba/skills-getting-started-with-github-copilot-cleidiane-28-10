@@ -21,6 +21,12 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
 
 # In-memory activity database
 activities = {
+    "Soccer Club": {"description": "Practice soccer and teamwork", "schedule": "Mondays, 3:30 PM - 5:00 PM", "max_participants": 22, "participants": []},
+    "Basketball Club": {"description": "Practice basketball skills", "schedule": "Tuesdays, 3:30 PM - 5:00 PM", "max_participants": 20, "participants": []},
+    "Painting Club": {"description": "Explore painting techniques", "schedule": "Wednesdays, 3:30 PM - 4:30 PM", "max_participants": 15, "participants": []},
+    "Theater Club": {"description": "Practice acting and perform plays", "schedule": "Thursdays, 3:30 PM - 5:00 PM", "max_participants": 20, "participants": []},
+    "Debate Club": {"description": "Develop argumentation and public speaking skills", "schedule": "Fridays, 3:30 PM - 4:30 PM", "max_participants": 16, "participants": []},
+    "Math Club": {"description": "Solve challenging math problems", "schedule": "Tuesdays, 3:30 PM - 4:30 PM", "max_participants": 15, "participants": []},
     "Chess Club": {
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
@@ -62,6 +68,14 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")
+
+    # Validate activity is not full
+    if len(activity["participants"]) >= activity["max_participants"]:
+        raise HTTPException(status_code=400, detail="Activity is full")
+   
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
